@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MARCH TO GLORY — EatClub Sales Raffle</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg-dark: #0C0C0C;
+    --cream: #F0EBE1;
+    --cream-light: #FAF8F4;
+    --amber: #F5C842;
+    --amber-dark: #E0B530;
+    --blue: #5B9BD5;
+    --blue-dark: #4a87c0;
+    --red: #E24B4A;
+    --orange: #E8732A;
+    --purple: #7F77DD;
+    --card-bg: #ffffff;
+    --body-bg: #FAF8F4;
+    --text: #1a1a1a;
+    --text-secondary: #9B9188;
+    --border: rgba(0,0,0,0.07);
+  }
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--body-bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 72px;
+    overflow-x: hidden;
+  }
+
+  /* ---- HERO HEADER ---- */
+  .hero {
+    background: linear-gradient(135deg, #0C0C0C 0%, #1a1a2e 50%, #16213e 100%);
+    color: #fff;
+    padding: 24px 20px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(245,200,66,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(91,155,213,0.15) 0%, transparent 50%);
+    animation: heroGlow 8s ease-in-out infinite alternate;
+  }
+  @keyframes heroGlow {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-5%, 5%) scale(1.1); }
+  }
+  .hero > * { position: relative; z-index: 1; }
+  .hero .ec-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+  }
+  .hero .ec-icon {
+    width: 28px; height: 28px;
+    background: var(--amber);
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero .ec-name { font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+  .hero h1 {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .hero h1 .gold {
+    background: linear-gradient(135deg, #F5C842, #FFD700, #F5C842);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero .tagline {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-bottom: 14px;
+  }
+
+  /* Prize banner */
+  .prize-banner {
+    background: linear-gradient(135deg, rgba(245,200,66,0.15), rgba(245,200,66,0.05));
+    border: 1px solid rgba(245,200,66,0.3);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 0 auto;
+    max-width: 340px;
+  }
+  .prize-banner .prize-amount {
+    font-size: 28px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #F5C842, #FFD700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  .prize-banner .prize-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+  .prize-banner .prize-items {
+    font-size: 11px;
+    opacity: 0.5;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* Countdown */
+  .countdown-bar {
+    background: linear-gradient(90deg, var(--amber), #FFD700, var(--amber));
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+    color: #0C0C0C;
+    text-align: center;
+    padding: 10px;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* Tabs */
+  .tab-bar {
+    display: flex;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    overflow-x: auto;
+  }
+  .tab-bar button {
+    flex: 1;
+    min-width: 0;
+    padding: 14px 8px;
+    border: none;
+    background: none;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: 'DM Sans', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .tab-bar button.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+  }
+  .tab-content { display: none; padding: 16px; max-width: 600px; margin: 0 auto; }
+  .tab-content.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .card h3 {
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Stat cards */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--amber));
+  }
+  .stat-card .stat-value {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--blue);
+  }
+  .stat-card .stat-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+    font-weight: 600;
+  }
+
+  /* Ticket bar chart */
+  .ticket-bars { margin-bottom: 16px; }
+  .ticket-bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 10px;
+  }
+  .ticket-bar-name {
+    width: 70px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .ticket-bar-track {
+    flex: 1;
+    height: 32px;
+    background: #f0ede6;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .ticket-bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    min-width: 36px;
+  }
+
+  /* Leaderboard table */
+  .lb-table { width: 100%; border-collapse: collapse; }
+  .lb-table th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    padding: 10px 6px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    font-weight: 700;
+  }
+  .lb-table td {
+    padding: 12px 6px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  .lb-table tr:first-child td {
+    background: linear-gradient(90deg, rgba(245,200,66,0.08), transparent);
+  }
+  .lb-table tr:hover { background: rgba(91,155,213,0.04); }
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 900;
+  }
+  .rank-1 { background: linear-gradient(135deg, #F5C842, #FFD700); color: #0C0C0C; box-shadow: 0 2px 8px rgba(245,200,66,0.4); }
+  .rank-2 { background: linear-gradient(135deg, #C0C0C0, #d4d4d4); color: #fff; }
+  .rank-3 { background: linear-gradient(135deg, #CD7F32, #e8a45c); color: #fff; }
+  .rank-other { background: #e8e4dc; color: #888; }
+  .avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    margin-right: 10px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .bdm-name-cell { display: flex; align-items: center; font-weight: 700; }
+  .streak-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #F5C842, #FFD700);
+    color: #0C0C0C;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .tickets-cell { font-weight: 900; color: var(--blue); font-size: 15px !important; }
+
+  /* Form */
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .form-group select,
+  .form-group input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    background: #fff;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .form-group select:focus,
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--blue);
+  }
+  .form-group select { background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E") no-repeat right 14px center; }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .toggle-group { display: flex; gap: 8px; }
+  .toggle-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .toggle-btn.active {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+
+  /* Ticket preview */
+  .ticket-preview {
+    background: linear-gradient(135deg, #0C0C0C, #1a1a2e);
+    color: var(--cream);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 16px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .ticket-preview::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(245,200,66,0.1) 0%, transparent 60%);
+  }
+  .ticket-preview > * { position: relative; }
+  .ticket-preview .tp-number {
+    font-size: 56px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--amber), #FFD700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  .ticket-preview .tp-label {
+    font-size: 11px;
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+  }
+  .ticket-preview .tp-breakdown {
+    font-size: 11px;
+    opacity: 0.4;
+    margin-top: 8px;
+  }
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 16px rgba(91,155,213,0.3);
+  }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:hover { box-shadow: 0 6px 24px rgba(91,155,213,0.4); }
+
+  /* Challenges */
+  .challenge-day { margin-bottom: 18px; }
+  .challenge-day-header {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .challenge-day-header .day-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 8px rgba(91,155,213,0.4);
+  }
+  .challenge-day-header .day-dot.future { background: #ddd; box-shadow: none; }
+  .challenge-day-header .day-dot.past { background: var(--amber); box-shadow: 0 0 8px rgba(245,200,66,0.4); }
+  .challenge-item {
+    background: var(--card-bg);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+  }
+  .challenge-item.claimed {
+    border-color: var(--amber);
+    background: linear-gradient(135deg, rgba(245,200,66,0.06), rgba(245,200,66,0.02));
+  }
+  .challenge-item.locked { opacity: 0.4; }
+  .challenge-desc { font-size: 13px; font-weight: 600; flex: 1; }
+  .challenge-tickets {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--blue);
+    margin-left: 10px;
+    white-space: nowrap;
+  }
+  .challenge-status { font-size: 11px; margin-left: 8px; white-space: nowrap; font-weight: 600; }
+  .challenge-status.won { color: var(--amber-dark); font-weight: 800; }
+
+  /* Draw */
+  .draw-section {
+    text-align: center;
+    padding: 20px 0;
+    position: relative;
+  }
+  .draw-barrel .barrel-icon { font-size: 48px; margin-bottom: 8px; }
+  .draw-barrel .barrel-count {
+    font-size: 72px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  .draw-barrel .barrel-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 4px;
+    font-weight: 700;
+  }
+  .draw-btn {
+    display: block;
+    margin: 24px auto;
+    padding: 18px 56px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #F5C842, #FFD700, #F5C842);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+    color: #0C0C0C;
+    font-size: 18px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(245,200,66,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .draw-btn:active { transform: scale(0.96); }
+  .draw-btn:hover { box-shadow: 0 8px 32px rgba(245,200,66,0.5); transform: scale(1.02); }
+  .draw-result {
+    text-align: center;
+    margin: 24px 0;
+    display: none;
+  }
+  .draw-result.show { display: block; }
+  .draw-result .winner-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+  }
+  .draw-result .winner-name {
+    font-size: 48px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #F5C842, #FFD700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .odds-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  .odds-table th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    padding: 10px 6px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    font-weight: 700;
+  }
+  .odds-table td {
+    padding: 10px 6px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  .odds-bar { height: 8px; border-radius: 4px; background: #f0ede6; overflow: hidden; }
+  .odds-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--blue), var(--amber));
+    transition: width 0.6s ease;
+  }
+
+  /* Rules */
+  .rules-section { margin-bottom: 20px; }
+  .rules-section h4 {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--blue);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rules-section h4::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: linear-gradient(180deg, var(--blue), var(--amber));
+    border-radius: 2px;
+  }
+  .rule-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .rule-row:last-child { border-bottom: none; }
+  .rule-tickets {
+    font-weight: 800;
+    color: var(--blue);
+    white-space: nowrap;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: linear-gradient(135deg, #0C0C0C, #1a1a2e);
+    color: var(--cream);
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 200;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    white-space: nowrap;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    border: 1px solid rgba(245,200,66,0.2);
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  /* Confetti canvas */
+  #confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 300;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="ec-logo">
+    <div class="ec-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#0C0C0C"/></svg></div>
+    <span class="ec-name">EatClub</span>
+  </div>
+  <h1>MARCH <span class="gold">TO GLORY</span></h1>
+  <div class="tagline">24 - 31 March 2026</div>
+  <div class="prize-banner">
+    <div class="prize-amount">£2,000+ IN PRIZES</div>
+    <div class="prize-label">Up for grabs this week</div>
+    <div class="prize-items">Cash prizes, gift cards, experiences & more. Every ticket counts!</div>
+  </div>
+</div>
+<div class="countdown-bar" id="countdown"></div>
+
+<div class="tab-bar">
+  <button class="active" onclick="switchTab('leaderboard')">Leaderboard</button>
+  <button onclick="switchTab('log')">Log Activity</button>
+  <button onclick="switchTab('challenges')">Challenges</button>
+  <button onclick="switchTab('draw')">Draw</button>
+  <button onclick="switchTab('rules')">Rules</button>
+</div>
+
+<!-- LEADERBOARD TAB -->
+<div id="tab-leaderboard" class="tab-content active">
+  <div class="stat-grid" id="stat-grid"></div>
+  <div class="card">
+    <h3>Rankings</h3>
+    <table class="lb-table">
+      <thead>
+        <tr><th>#</th><th>BDM</th><th>Signed</th><th>Won</th><th>Bonus</th><th>Tickets</th></tr>
+      </thead>
+      <tbody id="lb-body"></tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Ticket Share</h3>
+    <div class="ticket-bars" id="ticket-bars"></div>
+  </div>
+</div>
+
+<!-- LOG ACTIVITY TAB -->
+<div id="tab-log" class="tab-content">
+  <div class="card">
+    <h3>Log Activity</h3>
+
+    <!-- Role selector -->
+    <div class="form-group">
+      <label>Your Role</label>
+      <div class="toggle-group">
+        <button class="toggle-btn" id="f-role-bdm" onclick="setRole('BDM')">BDM</button>
+        <button class="toggle-btn" id="f-role-am" onclick="setRole('AM')">AM</button>
+      </div>
+    </div>
+
+    <!-- Name dropdown (changes based on role) -->
+    <div class="form-group" id="name-group" style="display:none">
+      <label>Name</label>
+      <select id="f-bdm">
+        <option value="">Select your name...</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date" id="f-date">
+    </div>
+
+    <!-- BDM FIELDS -->
+    <div id="bdm-fields" style="display:none">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Venues Signed</label>
+          <input type="number" id="f-signed" min="0" value="0">
+        </div>
+        <div class="form-group">
+          <label>Closed Won</label>
+          <input type="number" id="f-won" min="0" value="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Walk-ins</label>
+          <input type="number" id="f-walkins" min="0" value="0">
+        </div>
+        <div class="form-group">
+          <label>Calls Made</label>
+          <input type="number" id="f-calls" min="0" value="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Deals Created</label>
+        <input type="number" id="f-deals" min="0" value="0">
+      </div>
+      <div class="form-group">
+        <label>Signed + Closed Same Day?</label>
+        <div class="toggle-group">
+          <button class="toggle-btn" id="f-sameday-no" onclick="setSameDay(false)">No</button>
+          <button class="toggle-btn" id="f-sameday-yes" onclick="setSameDay(true)">Yes</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Venue Type (e.g. Chinese, Cafe...)</label>
+        <input type="text" id="f-venuetype" placeholder="Optional">
+      </div>
+    </div>
+
+    <!-- AM FIELDS -->
+    <div id="am-fields" style="display:none">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Churn Saves</label>
+          <input type="number" id="f-churnsaves" min="0" value="0">
+        </div>
+        <div class="form-group">
+          <label>Deal Upgrade 30%</label>
+          <input type="number" id="f-upgrade30" min="0" value="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Deal Upgrade 35%+</label>
+          <input type="number" id="f-upgrade35" min="0" value="0">
+        </div>
+        <div class="form-group">
+          <label>Loyalty</label>
+          <input type="number" id="f-loyalty" min="0" value="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Friday Night 35%</label>
+        <input type="number" id="f-friday35" min="0" value="0">
+      </div>
+    </div>
+
+    <div class="ticket-preview" id="ticket-preview">
+      <div class="tp-label">Tickets You'll Earn</div>
+      <div class="tp-number" id="tp-number">0</div>
+      <div class="tp-breakdown" id="tp-breakdown"></div>
+    </div>
+
+    <button class="submit-btn" onclick="submitEntry()">Submit Activity</button>
+  </div>
+</div>
+
+<!-- CHALLENGES TAB -->
+<div id="tab-challenges" class="tab-content">
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,rgba(91,155,213,0.06),rgba(245,200,66,0.06));border-color:rgba(91,155,213,0.2);margin-bottom:16px;">
+    <div style="font-size:13px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;">Daily Challenges</div>
+    <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">New challenges revealed each day. First to qualify wins!</div>
+  </div>
+  <div id="challenges-list"></div>
+</div>
+
+<!-- DRAW TAB -->
+<div id="tab-draw" class="tab-content">
+  <div class="card">
+    <div class="draw-section">
+      <div class="draw-barrel">
+        <div class="barrel-icon">🎰</div>
+        <div class="barrel-count" id="barrel-count">0</div>
+        <div class="barrel-label">Tickets in the Barrel</div>
+      </div>
+      <button class="draw-btn" onclick="doDraw()">DRAW A WINNER</button>
+      <div class="draw-result" id="draw-result">
+        <div class="winner-label">The winner is...</div>
+        <div class="winner-name" id="winner-name"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Win Odds</h3>
+    <table class="odds-table">
+      <thead><tr><th>BDM</th><th>Tickets</th><th>Chance</th><th></th></tr></thead>
+      <tbody id="odds-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- RULES TAB -->
+<div id="tab-rules" class="tab-content">
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,rgba(245,200,66,0.08),rgba(91,155,213,0.04));border-color:rgba(245,200,66,0.2);margin-bottom:16px;">
+    <div style="font-size:20px;font-weight:900;color:var(--text);">£2,000+ IN PRIZES</div>
+    <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">More tickets = better odds. Here's how to earn them:</div>
+  </div>
+  <div class="card">
+    <div class="rules-section">
+      <h4>Base Tickets</h4>
+      <div class="rule-row"><span>Per venue signed</span><span class="rule-tickets">+1 ticket</span></div>
+      <div class="rule-row"><span>Per closed won</span><span class="rule-tickets">+3 tickets</span></div>
+    </div>
+    <div class="rules-section">
+      <h4>Daily Volume Multipliers</h4>
+      <div class="rule-row"><span>3 signs in a day</span><span class="rule-tickets">+2 bonus</span></div>
+      <div class="rule-row"><span>4 signs in a day</span><span class="rule-tickets">+4 bonus</span></div>
+      <div class="rule-row"><span>5+ signs in a day</span><span class="rule-tickets">+6 bonus</span></div>
+      <div class="rule-row"><span>2 closed won in a day</span><span class="rule-tickets">+4 bonus</span></div>
+      <div class="rule-row"><span>3+ closed won in a day</span><span class="rule-tickets">+8 bonus</span></div>
+    </div>
+    <div class="rules-section">
+      <h4>Streak Bonus</h4>
+      <div class="rule-row"><span>5 consecutive days with 1+ sign</span><span class="rule-tickets">+10 bonus</span></div>
+    </div>
+    <div class="rules-section">
+      <h4>Activity Bonuses (Daily Leader)</h4>
+      <div class="rule-row"><span>Most walk-ins of the day</span><span class="rule-tickets">+2 tickets</span></div>
+      <div class="rule-row"><span>Most calls of the day</span><span class="rule-tickets">+2 tickets</span></div>
+      <div class="rule-row"><span>Most demos booked of the day</span><span class="rule-tickets">+2 tickets</span></div>
+    </div>
+    <div class="rules-section">
+      <h4>Weekly & Overall Leaders</h4>
+      <div class="rule-row"><span>Weekly leader per category</span><span class="rule-tickets">+5 tickets</span></div>
+      <div class="rule-row"><span>End of comp leader per category</span><span class="rule-tickets">+10 tickets</span></div>
+    </div>
+    <div class="rules-section">
+      <h4>Daily Challenges</h4>
+      <div class="rule-row"><span>Revealed each morning — first to qualify wins!</span><span class="rule-tickets">+3 to +8</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:var(--blue);">AM Ticket Rules</h3>
+    <div class="rules-section">
+      <h4>Base Tickets</h4>
+      <div class="rule-row"><span>Per churn save</span><span class="rule-tickets">+2 tickets</span></div>
+      <div class="rule-row"><span>Per deal upgrade 30%</span><span class="rule-tickets">+1 ticket</span></div>
+      <div class="rule-row"><span>Per deal upgrade 35%+</span><span class="rule-tickets">+3 tickets</span></div>
+      <div class="rule-row"><span>Per loyalty</span><span class="rule-tickets">+2 tickets</span></div>
+      <div class="rule-row"><span>Per Friday Night 35%</span><span class="rule-tickets">+4 tickets</span></div>
+    </div>
+    <div class="rules-section">
+      <h4>Volume Multipliers</h4>
+      <div class="rule-row"><span>3 churn saves in a day</span><span class="rule-tickets">+4 bonus</span></div>
+      <div class="rule-row"><span>2 deal upgrades 30% in a day</span><span class="rule-tickets">+4 bonus</span></div>
+      <div class="rule-row"><span>3+ deal upgrades 30% in a day</span><span class="rule-tickets">+8 bonus</span></div>
+      <div class="rule-row"><span>2 deal upgrades 35%+ in a day</span><span class="rule-tickets">+4 bonus</span></div>
+      <div class="rule-row"><span>3+ deal upgrades 35%+ in a day</span><span class="rule-tickets">+8 bonus</span></div>
+      <div class="rule-row"><span>2 Friday Night 35% in a day</span><span class="rule-tickets">+4 bonus</span></div>
+      <div class="rule-row"><span>3+ Friday Night 35% in a day</span><span class="rule-tickets">+8 bonus</span></div>
+    </div>
+  </div>
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+<div class="toast" id="toast"></div>
+
+<script>
+const BDMS = ['Jordan','Asher','Ikani','Nicola','Connar','Summar','Emily','Danny'];
+const AMS = ['Andrew','Oke','Ryan'];
+const ALL_PEOPLE = [...BDMS, ...AMS];
+const BDM_COLORS = ['#5B9BD5','#E24B4A','#F5C842','#7F77DD','#E8732A','#3498db','#e84393','#4a87c0','#2EC4A0','#9B59B6','#1ABC9C'];
+const COMP_START = '2026-03-24';
+const COMP_END = '2026-03-31';
+
+let STATE = { entries: [], claimed: [], bonuses: [] };
+let samedayFlag = false;
+let currentRole = null;
+
+function setRole(role) {
+  currentRole = role;
+  document.getElementById('f-role-bdm').classList.toggle('active', role === 'BDM');
+  document.getElementById('f-role-am').classList.toggle('active', role === 'AM');
+
+  // Show name dropdown
+  document.getElementById('name-group').style.display = 'block';
+
+  // Populate dropdown based on role
+  const sel = document.getElementById('f-bdm');
+  const names = role === 'BDM' ? BDMS : AMS;
+  sel.innerHTML = '<option value="">Select your name...</option>' + names.map(n => `<option>${n}</option>`).join('');
+
+  // Show/hide fields
+  document.getElementById('bdm-fields').style.display = role === 'BDM' ? 'block' : 'none';
+  document.getElementById('am-fields').style.display = role === 'AM' ? 'block' : 'none';
+
+  updateTicketPreview();
+}
+
+// ---- CONFETTI ----
+const confettiCanvas = document.getElementById('confetti-canvas');
+const ctx = confettiCanvas.getContext('2d');
+let confettiPieces = [];
+let confettiRunning = false;
+
+function resizeCanvas() {
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function launchConfetti() {
+  confettiPieces = [];
+  const colors = ['#F5C842','#FFD700','#5B9BD5','#E24B4A','#7F77DD','#E8732A','#fff'];
+  for (let i = 0; i < 150; i++) {
+    confettiPieces.push({
+      x: Math.random() * confettiCanvas.width,
+      y: -20 - Math.random() * 200,
+      w: 6 + Math.random() * 6,
+      h: 4 + Math.random() * 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 4,
+      vy: 2 + Math.random() * 4,
+      rot: Math.random() * 360,
+      rotV: (Math.random() - 0.5) * 10,
+      opacity: 1,
+    });
+  }
+  if (!confettiRunning) {
+    confettiRunning = true;
+    animateConfetti();
+  }
+}
+
+function animateConfetti() {
+  ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  let alive = false;
+  confettiPieces.forEach(p => {
+    if (p.opacity <= 0) return;
+    alive = true;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.05;
+    p.rot += p.rotV;
+    if (p.y > confettiCanvas.height + 20) p.opacity = 0;
+    if (p.y > confettiCanvas.height - 100) p.opacity -= 0.02;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot * Math.PI / 180);
+    ctx.globalAlpha = Math.max(0, p.opacity);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+    ctx.restore();
+  });
+  if (alive) requestAnimationFrame(animateConfetti);
+  else confettiRunning = false;
+}
+
+// ---- CHALLENGES DEFINITION ----
+const CHALLENGES = {
+  '2026-03-24': [
+    { key: '0324-walkins15', desc: '15 walk-ins in one day', tickets: 4, auto: e => sumForBdmDate(e, 'walkins') >= 15 },
+    { key: '0324-firstsign', desc: 'First to sign a deal today', tickets: 3, auto: e => sumForBdmDate(e, 'signed') >= 1, firstClaim: true },
+    { key: '0324-sameday', desc: 'First to sign + close same day', tickets: 6, auto: e => e.some(x => x.sameday), firstClaim: true },
+  ],
+  '2026-03-25': [
+    { key: '0325-calls30', desc: '30 calls in one day', tickets: 4, auto: e => sumForBdmDate(e, 'calls') >= 30 },
+  ],
+  '2026-03-26': [
+    { key: '0326-deals5', desc: 'Create 5 deals in one day', tickets: 4, auto: e => sumForBdmDate(e, 'deals') >= 5 },
+  ],
+  '2026-03-27': [
+    { key: '0327-chinese', desc: 'Sign a Chinese venue', tickets: 6, auto: e => e.some(x => (x.venuetype||'').toLowerCase().includes('chinese') && x.signed > 0) },
+  ],
+  '2026-03-28': [
+    { key: '0328-sign3', desc: 'Sign 3 deals in one day', tickets: 6, auto: e => sumForBdmDate(e, 'signed') >= 3 },
+  ],
+  '2026-03-29': [
+    { key: '0329-mostwon', desc: 'Most closed won today — winner takes all', tickets: 6, manual: true },
+  ],
+  '2026-03-30': [
+    { key: '0330-walkins15', desc: '15 walk-ins in one day', tickets: 4, auto: e => sumForBdmDate(e, 'walkins') >= 15 },
+  ],
+  '2026-03-31': [
+    { key: '0331-grand', desc: 'GRAND FINALE: First to sign 2 venues before midday', tickets: 8, auto: e => sumForBdmDate(e, 'signed') >= 2, firstClaim: true },
+  ],
+};
+
+function sumForBdmDate(entries, field) {
+  return entries.reduce((s, e) => s + (e[field]||0), 0);
+}
+
+// ---- TABS ----
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const tabs = ['leaderboard','log','challenges','draw','rules'];
+  document.querySelectorAll('.tab-bar button')[tabs.indexOf(id)].classList.add('active');
+}
+
+// ---- COUNTDOWN ----
+function updateCountdown() {
+  const now = new Date();
+  // Start at midnight tonight (end of today)
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const start = new Date(today.getTime() + 86400000); // midnight tonight
+  const end = new Date(start.getTime() + 7 * 86400000); // 7 days later
+  let text = '';
+  if (now < start) {
+    const diff = start - now;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    text = `STARTS IN ${h}H ${m}M ${s}S`;
+  } else if (now <= end) {
+    const diff = end - now;
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    text = `${d}D ${h}H ${m}M ${s}S REMAINING — GO GO GO!`;
+  } else {
+    text = 'COMPETITION COMPLETE!';
+  }
+  document.getElementById('countdown').textContent = text;
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// ---- DATE DEFAULT ----
+document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+
+// ---- SAME DAY TOGGLE ----
+function setSameDay(v) {
+  samedayFlag = v;
+  document.getElementById('f-sameday-yes').classList.toggle('active', v);
+  document.getElementById('f-sameday-no').classList.toggle('active', !v);
+  updateTicketPreview();
+}
+setSameDay(false);
+
+// ---- TICKET CALCULATION ----
+function calcTicketsBDM(signed, won) {
+  let base = (signed * 1) + (won * 3);
+  let bonus = 0;
+  let breakdown = [];
+
+  if (signed >= 1) breakdown.push(`${signed} sign${signed>1?'s':''} = ${signed}`);
+  if (won >= 1) breakdown.push(`${won} won = ${won * 3}`);
+
+  if (signed >= 5) { bonus += 6; breakdown.push('5+ signs bonus = +6'); }
+  else if (signed >= 4) { bonus += 4; breakdown.push('4 signs bonus = +4'); }
+  else if (signed >= 3) { bonus += 2; breakdown.push('3 signs bonus = +2'); }
+
+  if (won >= 3) { bonus += 8; breakdown.push('3+ won bonus = +8'); }
+  else if (won >= 2) { bonus += 4; breakdown.push('2 won bonus = +4'); }
+
+  return { total: base + bonus, breakdown: breakdown.join(' | ') };
+}
+
+function calcTicketsAM(churnsaves, upgrade30, upgrade35, loyalty, friday35) {
+  let base = (churnsaves * 2) + (upgrade30 * 1) + (upgrade35 * 3) + (loyalty * 2) + (friday35 * 4);
+  let bonus = 0;
+  let breakdown = [];
+
+  if (churnsaves >= 1) breakdown.push(`${churnsaves} save${churnsaves>1?'s':''} x2 = ${churnsaves * 2}`);
+  if (upgrade30 >= 1) breakdown.push(`${upgrade30} x 30% = ${upgrade30}`);
+  if (upgrade35 >= 1) breakdown.push(`${upgrade35} x 35% x3 = ${upgrade35 * 3}`);
+  if (loyalty >= 1) breakdown.push(`${loyalty} loyalty x2 = ${loyalty * 2}`);
+  if (friday35 >= 1) breakdown.push(`${friday35} Fri 35% x4 = ${friday35 * 4}`);
+
+  // Churn saves: 3 saves = +4 bonus
+  if (churnsaves >= 3) { bonus += 4; breakdown.push('3+ saves bonus = +4'); }
+
+  // Upgrade 30%: same as CW (2 = +4, 3+ = +8)
+  if (upgrade30 >= 3) { bonus += 8; breakdown.push('3+ upgrades 30% bonus = +8'); }
+  else if (upgrade30 >= 2) { bonus += 4; breakdown.push('2 upgrades 30% bonus = +4'); }
+
+  // Upgrade 35%+: same as CW (2 = +4, 3+ = +8)
+  if (upgrade35 >= 3) { bonus += 8; breakdown.push('3+ upgrades 35% bonus = +8'); }
+  else if (upgrade35 >= 2) { bonus += 4; breakdown.push('2 upgrades 35% bonus = +4'); }
+
+  // Friday Night 35%: same as CW (2 = +4, 3+ = +8)
+  if (friday35 >= 3) { bonus += 8; breakdown.push('3+ Fri 35% bonus = +8'); }
+  else if (friday35 >= 2) { bonus += 4; breakdown.push('2 Fri 35% bonus = +4'); }
+
+  return { total: base + bonus, breakdown: breakdown.join(' | ') };
+}
+
+function calcTickets(signed, won) {
+  return calcTicketsBDM(signed, won);
+}
+
+function updateTicketPreview() {
+  let result;
+  if (currentRole === 'AM') {
+    const churnsaves = parseInt(document.getElementById('f-churnsaves').value) || 0;
+    const upgrade30 = parseInt(document.getElementById('f-upgrade30').value) || 0;
+    const upgrade35 = parseInt(document.getElementById('f-upgrade35').value) || 0;
+    const loyalty = parseInt(document.getElementById('f-loyalty').value) || 0;
+    const friday35 = parseInt(document.getElementById('f-friday35').value) || 0;
+    result = calcTicketsAM(churnsaves, upgrade30, upgrade35, loyalty, friday35);
+  } else {
+    const signed = parseInt(document.getElementById('f-signed').value) || 0;
+    const won = parseInt(document.getElementById('f-won').value) || 0;
+    result = calcTicketsBDM(signed, won);
+  }
+  document.getElementById('tp-number').textContent = result.total;
+  document.getElementById('tp-breakdown').textContent = result.breakdown;
+}
+document.querySelectorAll('#f-signed, #f-won').forEach(el => el.addEventListener('input', updateTicketPreview));
+document.addEventListener('input', function(e) {
+  if (['f-churnsaves','f-upgrade30','f-upgrade35','f-loyalty','f-friday35'].includes(e.target.id)) updateTicketPreview();
+});
+
+// ---- SUBMIT ENTRY ----
+async function submitEntry() {
+  if (!currentRole) { showToast('Pick your role first!'); return; }
+  const bdm = document.getElementById('f-bdm').value;
+  if (!bdm) { showToast('Pick your name first!'); return; }
+  const date = document.getElementById('f-date').value;
+
+  let body, total;
+  if (currentRole === 'BDM') {
+    const signed = parseInt(document.getElementById('f-signed').value) || 0;
+    const won = parseInt(document.getElementById('f-won').value) || 0;
+    const walkins = parseInt(document.getElementById('f-walkins').value) || 0;
+    const calls = parseInt(document.getElementById('f-calls').value) || 0;
+    const deals = parseInt(document.getElementById('f-deals').value) || 0;
+    const venuetype = document.getElementById('f-venuetype').value;
+    total = calcTicketsBDM(signed, won).total;
+    body = { bdm, role: 'BDM', date, signed, won, walkins, calls, deals, sameday: samedayFlag, venuetype, earned: total };
+  } else {
+    const churnsaves = parseInt(document.getElementById('f-churnsaves').value) || 0;
+    const upgrade30 = parseInt(document.getElementById('f-upgrade30').value) || 0;
+    const upgrade35 = parseInt(document.getElementById('f-upgrade35').value) || 0;
+    const loyalty = parseInt(document.getElementById('f-loyalty').value) || 0;
+    const friday35 = parseInt(document.getElementById('f-friday35').value) || 0;
+    total = calcTicketsAM(churnsaves, upgrade30, upgrade35, loyalty, friday35).total;
+    body = { bdm, role: 'AM', date, churnsaves, upgrade30, upgrade35, loyalty, friday35, earned: total };
+  }
+
+  try {
+    const res = await fetch('/api/entry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.ok) {
+      showToast(`+${total} tickets for ${bdm}!`);
+      if (total > 0) launchConfetti();
+      if (currentRole === 'BDM') {
+        document.getElementById('f-signed').value = 0;
+        document.getElementById('f-won').value = 0;
+        document.getElementById('f-walkins').value = 0;
+        document.getElementById('f-calls').value = 0;
+        document.getElementById('f-deals').value = 0;
+        document.getElementById('f-venuetype').value = '';
+        setSameDay(false);
+      } else {
+        document.getElementById('f-churnsaves').value = 0;
+        document.getElementById('f-upgrade30').value = 0;
+        document.getElementById('f-upgrade35').value = 0;
+        document.getElementById('f-loyalty').value = 0;
+        document.getElementById('f-friday35').value = 0;
+      }
+      updateTicketPreview();
+      await checkAndClaimChallenges(bdm, date, body);
+      await refreshState();
+    } else {
+      showToast('Error: ' + (data.error || 'Failed'));
+    }
+  } catch (err) {
+    showToast('Network error');
+  }
+}
+
+// ---- CHALLENGE AUTO-CLAIM ----
+async function checkAndClaimChallenges(bdm, date, entry) {
+  const dayChallenges = CHALLENGES[date];
+  if (!dayChallenges) return;
+
+  const bdmDateEntries = STATE.entries.filter(e => e.bdm === bdm && e.date === date);
+  bdmDateEntries.push(entry);
+
+  for (const ch of dayChallenges) {
+    if (ch.manual) continue;
+    if (STATE.claimed.find(c => c.challenge_key === ch.key)) continue;
+    if (ch.auto && ch.auto(bdmDateEntries)) {
+      try {
+        const res = await fetch('/api/claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ challenge_key: ch.key, bdm, tickets: ch.tickets })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          showToast(`CHALLENGE WON: ${ch.desc} (+${ch.tickets})`);
+          launchConfetti();
+        }
+      } catch (e) {}
+    }
+  }
+}
+
+// ---- AGGREGATE BDM DATA ----
+function getBdmStats() {
+  const stats = {};
+  ALL_PEOPLE.forEach(b => stats[b] = { signed: 0, won: 0, walkins: 0, calls: 0, deals: 0, churnsaves: 0, upgrade30: 0, upgrade35: 0, loyalty: 0, friday35: 0, earned: 0, bonus: 0, signingDays: new Set(), role: AMS.includes(b) ? 'AM' : 'BDM' });
+
+  STATE.entries.forEach(e => {
+    if (!stats[e.bdm]) return;
+    stats[e.bdm].signed += e.signed || 0;
+    stats[e.bdm].won += e.won || 0;
+    stats[e.bdm].walkins += e.walkins || 0;
+    stats[e.bdm].calls += e.calls || 0;
+    stats[e.bdm].deals += e.deals || 0;
+    stats[e.bdm].churnsaves += e.churnsaves || 0;
+    stats[e.bdm].upgrade30 += e.upgrade30 || 0;
+    stats[e.bdm].upgrade35 += e.upgrade35 || 0;
+    stats[e.bdm].loyalty += e.loyalty || 0;
+    stats[e.bdm].friday35 += e.friday35 || 0;
+    stats[e.bdm].earned += e.earned || 0;
+    if (e.signed > 0) stats[e.bdm].signingDays.add(e.date);
+  });
+
+  STATE.claimed.forEach(c => {
+    if (stats[c.bdm]) stats[c.bdm].bonus += c.tickets || 0;
+  });
+
+  STATE.bonuses.forEach(b => {
+    if (stats[b.bdm]) stats[b.bdm].bonus += b.amount || 0;
+  });
+
+  ALL_PEOPLE.forEach(b => {
+    const days = Array.from(stats[b].signingDays).sort();
+    let maxStreak = 0, streak = 1;
+    for (let i = 1; i < days.length; i++) {
+      const prev = new Date(days[i-1]);
+      const curr = new Date(days[i]);
+      const diff = (curr - prev) / 86400000;
+      if (diff === 1) { streak++; maxStreak = Math.max(maxStreak, streak); }
+      else { streak = 1; }
+    }
+    if (days.length === 1) maxStreak = 1;
+    else maxStreak = Math.max(maxStreak, streak);
+    stats[b].streak = maxStreak;
+    if (maxStreak >= 5) {
+      const streakKey = `streak5-${b}`;
+      if (!STATE.claimed.find(c => c.challenge_key === streakKey)) {
+        fetch('/api/claim', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ challenge_key: streakKey, bdm: b, tickets: 10 })
+        }).then(() => refreshState());
+      }
+    }
+  });
+
+  ALL_PEOPLE.forEach(b => {
+    stats[b].total = stats[b].earned + stats[b].bonus;
+  });
+
+  return stats;
+}
+
+// ---- RENDER LEADERBOARD ----
+function renderLeaderboard() {
+  const stats = getBdmStats();
+
+  let totalTickets = 0, totalSigned = 0, totalWon = 0, totalBonus = 0;
+  ALL_PEOPLE.forEach(b => {
+    totalTickets += stats[b].total;
+    totalSigned += stats[b].signed;
+    totalWon += stats[b].won;
+    totalBonus += stats[b].bonus;
+  });
+
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-value">${totalTickets}</div><div class="stat-label">Total Tickets</div></div>
+    <div class="stat-card"><div class="stat-value">${totalSigned}</div><div class="stat-label">Venues Signed</div></div>
+    <div class="stat-card"><div class="stat-value">${totalWon}</div><div class="stat-label">Closed Won</div></div>
+    <div class="stat-card"><div class="stat-value">${totalBonus}</div><div class="stat-label">Bonus Tickets</div></div>
+  `;
+
+  const ranked = ALL_PEOPLE.map((b, i) => ({ name: b, idx: i, ...stats[b] })).sort((a, b) => b.total - a.total);
+  const maxTickets = ranked[0]?.total || 1;
+
+  let barsHtml = '';
+  ranked.forEach(r => {
+    const pct = Math.max(3, (r.total / maxTickets) * 100);
+    barsHtml += `
+      <div class="ticket-bar-row">
+        <div class="ticket-bar-name">${r.name}</div>
+        <div class="ticket-bar-track">
+          <div class="ticket-bar-fill" style="width:${pct}%;background:${BDM_COLORS[r.idx]}">${r.total}</div>
+        </div>
+      </div>`;
+  });
+  document.getElementById('ticket-bars').innerHTML = barsHtml;
+
+  let tbodyHtml = '';
+  ranked.forEach((r, i) => {
+    const rankClass = i < 3 ? `rank-${i+1}` : 'rank-other';
+    const streakBadge = r.streak >= 3 ? `<span class="streak-badge">${r.streak}-DAY STREAK</span>` : '';
+    const roleBadge = `<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;background:${r.role==='AM'?'#2EC4A0':'var(--blue)'};color:#fff;text-transform:uppercase;letter-spacing:0.5px">${r.role}</span>`;
+    const activityCol = r.role === 'AM' ? (r.churnsaves + r.upgrade30 + r.upgrade35 + r.loyalty + r.friday35) : r.signed;
+    const wonCol = r.role === 'AM' ? '-' : r.won;
+    tbodyHtml += `
+      <tr>
+        <td><span class="rank-badge ${rankClass}">${i+1}</span></td>
+        <td><div class="bdm-name-cell"><span class="avatar" style="background:${BDM_COLORS[r.idx]}">${r.name.charAt(0)}</span>${r.name}${roleBadge}${streakBadge}</div></td>
+        <td>${activityCol}</td>
+        <td>${wonCol}</td>
+        <td>${r.bonus}</td>
+        <td class="tickets-cell">${r.total}</td>
+      </tr>`;
+  });
+  document.getElementById('lb-body').innerHTML = tbodyHtml;
+}
+
+// ---- RENDER CHALLENGES ----
+function renderChallenges() {
+  const today = new Date().toISOString().split('T')[0];
+  let html = '';
+
+  Object.keys(CHALLENGES).sort().forEach(date => {
+    const dayName = new Date(date + 'T12:00:00').toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' });
+    const isFuture = date > today;
+    const isPast = date < today;
+    const isToday = date === today;
+    const dotClass = isFuture ? 'future' : (isPast ? 'past' : '');
+
+    const todayLabel = isToday ? ' — TODAY' : '';
+    html += `<div class="challenge-day"><div class="challenge-day-header"><span class="day-dot ${dotClass}"></span>${dayName}${todayLabel}</div>`;
+
+    CHALLENGES[date].forEach(ch => {
+      const claim = STATE.claimed.find(c => c.challenge_key === ch.key);
+
+      if (isFuture) {
+        html += `<div class="challenge-item locked"><span class="challenge-desc">??? Mystery Challenge</span><span class="challenge-tickets">? tickets</span></div>`;
+      } else {
+        const claimedClass = claim ? 'claimed' : '';
+        let statusHtml = '';
+        if (claim) {
+          statusHtml = `<span class="challenge-status won">Won by ${claim.bdm}</span>`;
+        } else if (ch.manual && !isFuture) {
+          statusHtml = `<span class="challenge-status">Awaiting award</span>`;
+        }
+        html += `<div class="challenge-item ${claimedClass}"><span class="challenge-desc">${ch.desc}</span><span class="challenge-tickets">+${ch.tickets}</span>${statusHtml}</div>`;
+      }
+    });
+
+    html += '</div>';
+  });
+
+  document.getElementById('challenges-list').innerHTML = html;
+}
+
+// ---- RENDER DRAW ----
+function renderDraw() {
+  const stats = getBdmStats();
+  let totalTickets = 0;
+  ALL_PEOPLE.forEach(b => totalTickets += stats[b].total);
+  document.getElementById('barrel-count').textContent = totalTickets;
+
+  const ranked = ALL_PEOPLE.map((b, i) => ({ name: b, idx: i, ...stats[b] })).sort((a, b) => b.total - a.total);
+  let html = '';
+  ranked.forEach(r => {
+    const pct = totalTickets > 0 ? ((r.total / totalTickets) * 100).toFixed(1) : '0.0';
+    html += `
+      <tr>
+        <td><div class="bdm-name-cell"><span class="avatar" style="background:${BDM_COLORS[r.idx]};width:28px;height:28px;font-size:12px">${r.name.charAt(0)}</span>${r.name}</div></td>
+        <td style="font-weight:800">${r.total}</td>
+        <td>${pct}%</td>
+        <td style="width:80px"><div class="odds-bar"><div class="odds-bar-fill" style="width:${pct}%"></div></div></td>
+      </tr>`;
+  });
+  document.getElementById('odds-body').innerHTML = html;
+}
+
+function doDraw() {
+  const stats = getBdmStats();
+  let pool = [];
+  ALL_PEOPLE.forEach(b => {
+    for (let i = 0; i < stats[b].total; i++) pool.push(b);
+  });
+  if (pool.length === 0) { showToast('No tickets in the barrel yet!'); return; }
+
+  const resultEl = document.getElementById('draw-result');
+  const nameEl = document.getElementById('winner-name');
+  resultEl.classList.remove('show');
+
+  let count = 0;
+  const interval = setInterval(() => {
+    nameEl.textContent = ALL_PEOPLE[Math.floor(Math.random() * ALL_PEOPLE.length)];
+    resultEl.classList.add('show');
+    count++;
+    if (count >= 20) {
+      clearInterval(interval);
+      const winner = pool[Math.floor(Math.random() * pool.length)];
+      nameEl.textContent = winner;
+      nameEl.style.animation = 'none';
+      setTimeout(() => nameEl.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)', 10);
+      launchConfetti();
+    }
+  }, 80);
+}
+
+// ---- STATE REFRESH ----
+async function refreshState() {
+  try {
+    const res = await fetch('/api/state');
+    STATE = await res.json();
+    renderLeaderboard();
+    renderChallenges();
+    renderDraw();
+  } catch (e) {
+    console.error('Failed to fetch state', e);
+  }
+}
+
+// ---- TOAST ----
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ---- INIT ----
+refreshState();
+setInterval(refreshState, 10000);
+</script>
+</body>
+</html>
