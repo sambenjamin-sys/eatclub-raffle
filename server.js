@@ -24,6 +24,10 @@ app.get('/api/state', (req, res) => {
 app.post('/api/entry', (req, res) => {
   const { bdm, role, date, signed, won, walkins, calls, deals, sameday, venuetype, churnsaves, upgrade30, upgrade35, loyalty, friday35, earned } = req.body;
   if (!ALL_PEOPLE.includes(bdm)) return res.status(400).json({ error: 'Invalid name' });
+
+  // Lock past days — can only log for today
+  const today = new Date().toISOString().split('T')[0];
+  if (date !== today) return res.status(400).json({ error: 'You can only log activity for today. Past days are locked!' });
   const stmt = db.prepare(`
     INSERT INTO entries (bdm, role, date, signed, won, walkins, calls, deals, sameday, venuetype, churnsaves, upgrade30, upgrade35, loyalty, friday35, earned)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

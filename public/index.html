@@ -684,7 +684,7 @@
 
 <div class="tab-bar">
   <button class="active" onclick="switchTab('leaderboard')">Leaderboard</button>
-  <button onclick="switchTab('log')">Log Activity</button>
+  <button onclick="switchTab('log')">Daily Activity Log</button>
   <button onclick="switchTab('challenges')">Challenges</button>
   <button onclick="switchTab('draw')">Draw</button>
   <button onclick="switchTab('rules')">Rules</button>
@@ -711,7 +711,7 @@
 <!-- LOG ACTIVITY TAB -->
 <div id="tab-log" class="tab-content">
   <div class="card">
-    <h3>Log Activity</h3>
+    <h3>Daily Activity Log</h3>
 
     <!-- Role selector -->
     <div class="form-group">
@@ -731,8 +731,8 @@
     </div>
 
     <div class="form-group">
-      <label>Date</label>
-      <input type="date" id="f-date">
+      <label>Date (today only — past days are locked)</label>
+      <input type="date" id="f-date" readonly style="background:#f0ede6;cursor:not-allowed;">
     </div>
 
     <!-- BDM FIELDS -->
@@ -1006,7 +1006,8 @@ function animateConfetti() {
 }
 
 // ---- CHALLENGES DEFINITION ----
-const CHALLENGES = {
+// BDM Challenges (weekdays only)
+const BDM_CHALLENGES = {
   '2026-03-24': [
     { key: '0324-walkins15', desc: '15 walk-ins in one day', tickets: 4, auto: e => sumForBdmDate(e, 'walkins') >= 15 },
     { key: '0324-firstsign', desc: 'First to sign a deal today', tickets: 3, auto: e => sumForBdmDate(e, 'signed') >= 1, firstClaim: true },
@@ -1020,20 +1021,50 @@ const CHALLENGES = {
   ],
   '2026-03-27': [
     { key: '0327-chinese', desc: 'Sign a Chinese venue', tickets: 6, auto: e => e.some(x => (x.venuetype||'').toLowerCase().includes('chinese') && x.signed > 0) },
-  ],
-  '2026-03-28': [
     { key: '0328-sign3', desc: 'Sign 3 deals in one day', tickets: 6, auto: e => sumForBdmDate(e, 'signed') >= 3 },
   ],
-  '2026-03-29': [
-    { key: '0329-mostwon', desc: 'Most closed won today — winner takes all', tickets: 6, manual: true },
-  ],
   '2026-03-30': [
-    { key: '0330-walkins15', desc: '15 walk-ins in one day', tickets: 4, auto: e => sumForBdmDate(e, 'walkins') >= 15 },
+    { key: '0330-mostsigns', desc: 'Most signs today — winner takes all', tickets: 10, manual: true },
   ],
   '2026-03-31': [
     { key: '0331-grand', desc: 'GRAND FINALE: First to sign 2 venues before midday', tickets: 8, auto: e => sumForBdmDate(e, 'signed') >= 2, firstClaim: true },
   ],
 };
+
+// AM Challenges
+const AM_CHALLENGES = {
+  '2026-03-24': [
+    { key: '0324-am-upgrade30', desc: 'Get a venue to upgrade to 30%', tickets: 2, auto: e => sumForBdmDate(e, 'upgrade30') >= 1 },
+    { key: '0324-am-first35', desc: 'First AM to get a 35% upgrade today', tickets: 4, auto: e => sumForBdmDate(e, 'upgrade35') >= 1, firstClaim: true },
+    { key: '0324-am-firstloyalty', desc: 'First to sign a loyalty venue today', tickets: 6, auto: e => sumForBdmDate(e, 'loyalty') >= 1, firstClaim: true },
+  ],
+  '2026-03-25': [
+    { key: '0325-am-calls30', desc: '30 calls in one day', tickets: 4, auto: e => sumForBdmDate(e, 'calls') >= 30 },
+  ],
+  '2026-03-26': [
+    { key: '0326-am-upgrades5', desc: 'Create 5 upgrade deals in one day', tickets: 4, auto: e => (sumForBdmDate(e, 'upgrade30') + sumForBdmDate(e, 'upgrade35')) >= 5 },
+  ],
+  '2026-03-27': [
+    { key: '0327-am-friday35', desc: 'Get a venue onto a Friday 35% deal', tickets: 6, auto: e => sumForBdmDate(e, 'friday35') >= 1 },
+  ],
+  '2026-03-30': [
+    { key: '0330-am-3upgrades', desc: 'Get 3 upgrades in one day', tickets: 6, auto: e => (sumForBdmDate(e, 'upgrade30') + sumForBdmDate(e, 'upgrade35')) >= 3 },
+  ],
+  '2026-03-31': [
+    { key: '0331-am-grand', desc: 'GRAND FINALE: First to lock in a 35% upgrade + loyalty deal same day', tickets: 8, auto: e => sumForBdmDate(e, 'upgrade35') >= 1 && sumForBdmDate(e, 'loyalty') >= 1, firstClaim: true },
+  ],
+};
+
+// Merge both for display and claiming
+const CHALLENGES = {};
+Object.keys(BDM_CHALLENGES).forEach(d => {
+  if (!CHALLENGES[d]) CHALLENGES[d] = [];
+  CHALLENGES[d].push(...BDM_CHALLENGES[d].map(c => ({ ...c, role: 'BDM' })));
+});
+Object.keys(AM_CHALLENGES).forEach(d => {
+  if (!CHALLENGES[d]) CHALLENGES[d] = [];
+  CHALLENGES[d].push(...AM_CHALLENGES[d].map(c => ({ ...c, role: 'AM' })));
+});
 
 function sumForBdmDate(entries, field) {
   return entries.reduce((s, e) => s + (e[field]||0), 0);
@@ -1230,8 +1261,10 @@ async function checkAndClaimChallenges(bdm, date, entry) {
   const bdmDateEntries = STATE.entries.filter(e => e.bdm === bdm && e.date === date);
   bdmDateEntries.push(entry);
 
+  const personRole = AMS.includes(bdm) ? 'AM' : 'BDM';
   for (const ch of dayChallenges) {
     if (ch.manual) continue;
+    if (ch.role && ch.role !== personRole) continue; // Only check challenges for your role
     if (STATE.claimed.find(c => c.challenge_key === ch.key)) continue;
     if (ch.auto && ch.auto(bdmDateEntries)) {
       try {
@@ -1384,8 +1417,9 @@ function renderChallenges() {
     CHALLENGES[date].forEach(ch => {
       const claim = STATE.claimed.find(c => c.challenge_key === ch.key);
 
+      const roleBadge = ch.role ? `<span style="font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;margin-right:6px;background:${ch.role==='AM'?'#2EC4A0':'var(--blue)'};color:#fff">${ch.role}</span>` : '';
       if (isFuture) {
-        html += `<div class="challenge-item locked"><span class="challenge-desc">??? Mystery Challenge</span><span class="challenge-tickets">? tickets</span></div>`;
+        html += `<div class="challenge-item locked"><span class="challenge-desc">${roleBadge}??? Mystery Challenge</span><span class="challenge-tickets">? tickets</span></div>`;
       } else {
         const claimedClass = claim ? 'claimed' : '';
         let statusHtml = '';
@@ -1394,7 +1428,7 @@ function renderChallenges() {
         } else if (ch.manual && !isFuture) {
           statusHtml = `<span class="challenge-status">Awaiting award</span>`;
         }
-        html += `<div class="challenge-item ${claimedClass}"><span class="challenge-desc">${ch.desc}</span><span class="challenge-tickets">+${ch.tickets}</span>${statusHtml}</div>`;
+        html += `<div class="challenge-item ${claimedClass}"><span class="challenge-desc">${roleBadge}${ch.desc}</span><span class="challenge-tickets">+${ch.tickets}</span>${statusHtml}</div>`;
       }
     });
 
