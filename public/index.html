@@ -1655,6 +1655,17 @@ function doPrizeDraw() {
   }, 1000);
 }
 
+function unlockPrizeAdmin() {
+  const pw = prompt('Enter admin password:');
+  if (pw === 'nicola') {
+    document.getElementById('prize-admin').style.display = 'block';
+    document.getElementById('prize-teaser').style.display = 'none';
+    document.getElementById('admin-unlock-btn').style.display = 'none';
+  } else {
+    showToast('Wrong password!');
+  }
+}
+
 // Legacy alias
 function doDraw() { doPrizeDraw(); }
 
