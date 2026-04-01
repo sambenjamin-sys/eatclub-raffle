@@ -1,5 +1,14 @@
 const Database = require('better-sqlite3');
-const db = new Database('raffle.db');
+const path = require('path');
+const fs = require('fs');
+
+// Use persistent volume on Railway, local file otherwise
+const dataDir = process.env.DATA_DIR || '.';
+if (dataDir !== '.' && !fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+const dbPath = path.join(dataDir, 'raffle.db');
+const db = new Database(dbPath);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS entries (
@@ -38,5 +47,19 @@ db.exec(`
     awarded_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `);
+
+// Seed restored data if database is fresh
+const count = db.prepare('SELECT COUNT(*) as c FROM bonus_tickets').get().c;
+if (count === 0) {
+  const seed = db.prepare('INSERT INTO bonus_tickets (bdm, amount, reason) VALUES (?, ?, ?)');
+  seed.run('Summar', 101, 'Restored from pre-deploy data');
+  seed.run('Asher', 31, 'Restored from pre-deploy data');
+  seed.run('Andrew', 27, 'Restored from pre-deploy data');
+  seed.run('Oke', 24, 'Restored from pre-deploy data');
+  seed.run('Nicola', 17, 'Restored from pre-deploy data');
+  seed.run('Ryan', 10, 'Restored from pre-deploy data');
+  seed.run('Connar', 4, 'Restored from pre-deploy data');
+  console.log('Seeded restored ticket data (214 total)');
+}
 
 module.exports = db;
