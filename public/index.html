@@ -830,17 +830,47 @@
         <div class="barrel-count" id="barrel-count">0</div>
         <div class="barrel-label">Tickets in the Barrel</div>
       </div>
-      <button class="draw-btn" onclick="doDraw()">DRAW A WINNER</button>
-      <div class="draw-result" id="draw-result">
-        <div class="winner-label">The winner is...</div>
-        <div class="winner-name" id="winner-name"></div>
+
+      <!-- PRIZE GRID -->
+      <div style="margin:24px 0 20px;">
+        <h3 style="text-align:center;font-size:14px;letter-spacing:2px;margin-bottom:16px;color:var(--text-secondary);">THE PRIZES</h3>
+        <div id="prize-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
       </div>
+
+      <!-- Prize selector -->
+      <div class="form-group" style="margin:16px 0;">
+        <label>Select Prize to Draw</label>
+        <select id="prize-select" style="width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;font-size:15px;background:#fff;font-family:'DM Sans',sans-serif;font-weight:600;">
+          <option value="">Choose a prize...</option>
+        </select>
+      </div>
+
+      <button class="draw-btn" onclick="doPrizeDraw()">DRAW A WINNER</button>
+
+      <!-- Countdown overlay -->
+      <div id="draw-countdown-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:500;justify-content:center;align-items:center;flex-direction:column;">
+        <div id="draw-countdown-number" style="font-size:160px;font-weight:900;background:linear-gradient(135deg,#F5C842,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);"></div>
+        <div id="draw-countdown-prize" style="font-size:16px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-top:10px;"></div>
+      </div>
+
+      <!-- Winner reveal overlay -->
+      <div id="winner-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#0C0C0C,#1a1a2e,#16213e);z-index:500;justify-content:center;align-items:center;flex-direction:column;text-align:center;padding:20px;">
+        <div style="font-size:14px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:4px;font-weight:700;margin-bottom:16px;">THE WINNER IS</div>
+        <div id="winner-overlay-name" style="font-size:64px;font-weight:900;background:linear-gradient(135deg,#F5C842,#FFD700,#F5C842);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:16px;"></div>
+        <div id="winner-overlay-prize" style="font-size:20px;color:#fff;font-weight:700;margin-bottom:8px;"></div>
+        <div id="winner-overlay-emoji" style="font-size:80px;margin:16px 0;"></div>
+        <button onclick="closeWinnerOverlay()" style="margin-top:24px;padding:14px 48px;border:none;border-radius:50px;background:linear-gradient(135deg,#F5C842,#FFD700);color:#0C0C0C;font-size:16px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:1px;text-transform:uppercase;">CLOSE</button>
+      </div>
+
+      <!-- Draw history -->
+      <div id="draw-history" style="margin-top:24px;"></div>
     </div>
   </div>
   <div class="card">
     <h3>Win Odds</h3>
+    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:12px;font-weight:600;">Max 2 wins per person (days off don't count toward limit)</div>
     <table class="odds-table">
-      <thead><tr><th>BDM</th><th>Tickets</th><th>Chance</th><th></th></tr></thead>
+      <thead><tr><th>Name</th><th>Tickets</th><th>Chance</th><th></th></tr></thead>
       <tbody id="odds-body"></tbody>
     </table>
   </div>
@@ -1460,33 +1490,173 @@ function renderDraw() {
   document.getElementById('odds-body').innerHTML = html;
 }
 
-function doDraw() {
+// ---- PRIZE SYSTEM ----
+const PRIZES = [
+  { id: 'flight', name: '£400 Flight Voucher', emoji: '✈️', isDayOff: false },
+  { id: 'dayoff1', name: 'Day Off', emoji: '🏖️', isDayOff: true },
+  { id: 'dayoff2', name: 'Day Off', emoji: '🏖️', isDayOff: true },
+  { id: 'beats', name: 'Beats Headphones', emoji: '🎧', isDayOff: false },
+  { id: 'airpods1', name: 'AirPods', emoji: '🎵', isDayOff: false },
+  { id: 'airpods2', name: 'AirPods', emoji: '🎵', isDayOff: false },
+  { id: 'bose', name: 'Bose Speaker', emoji: '🔊', isDayOff: false },
+];
+
+let prizeWinners = JSON.parse(localStorage.getItem('prizeWinners') || '[]');
+
+function savePrizeWinners() {
+  localStorage.setItem('prizeWinners', JSON.stringify(prizeWinners));
+}
+
+function getWinCount(name) {
+  return prizeWinners.filter(w => w.winner === name && !PRIZES.find(p => p.id === w.prizeId)?.isDayOff).length;
+}
+
+function isPrizeDrawn(prizeId) {
+  return prizeWinners.find(w => w.prizeId === prizeId);
+}
+
+function renderPrizeGrid() {
+  const grid = document.getElementById('prize-grid');
+  const select = document.getElementById('prize-select');
+  let gridHtml = '';
+  let selectHtml = '<option value="">Choose a prize...</option>';
+
+  PRIZES.forEach(p => {
+    const won = isPrizeDrawn(p.id);
+    const opacity = won ? '0.4' : '1';
+    const strike = won ? 'text-decoration:line-through;' : '';
+    const wonBy = won ? `<div style="font-size:10px;color:var(--amber-dark);font-weight:700;margin-top:4px;">Won by ${won.winner}</div>` : '';
+    const checkmark = won ? '<div style="position:absolute;top:8px;right:8px;font-size:18px;">✅</div>' : '';
+
+    gridHtml += `
+      <div style="background:var(--card-bg);border:2px solid ${won ? 'var(--amber)' : 'var(--border)'};border-radius:14px;padding:16px;text-align:center;position:relative;opacity:${opacity};transition:all 0.3s;">
+        ${checkmark}
+        <div style="font-size:40px;margin-bottom:6px;">${p.emoji}</div>
+        <div style="font-size:13px;font-weight:800;${strike}">${p.name}</div>
+        ${wonBy}
+      </div>`;
+
+    if (!won) {
+      selectHtml += `<option value="${p.id}">${p.emoji} ${p.name}</option>`;
+    }
+  });
+
+  grid.innerHTML = gridHtml;
+  select.innerHTML = selectHtml;
+
+  // Draw history
+  const historyEl = document.getElementById('draw-history');
+  if (prizeWinners.length > 0) {
+    let hHtml = '<h3 style="margin-bottom:12px;">Draw Results</h3>';
+    prizeWinners.forEach((w, i) => {
+      const prize = PRIZES.find(p => p.id === w.prizeId);
+      hHtml += `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">${prize?.emoji || '🎁'}</span>
+          <div>
+            <div style="font-size:14px;font-weight:800;">${w.winner}</div>
+            <div style="font-size:11px;color:var(--text-secondary);">${prize?.name || w.prizeId}</div>
+          </div>
+        </div>
+        <button onclick="undoPrizeDraw(${i})" style="font-size:10px;padding:4px 10px;border:1px solid var(--border);border-radius:8px;background:none;cursor:pointer;color:var(--text-secondary);font-family:'DM Sans',sans-serif;font-weight:600;">Undo</button>
+      </div>`;
+    });
+    historyEl.innerHTML = hHtml;
+  } else {
+    historyEl.innerHTML = '';
+  }
+}
+
+function undoPrizeDraw(index) {
+  prizeWinners.splice(index, 1);
+  savePrizeWinners();
+  renderPrizeGrid();
+  renderDraw();
+}
+
+function closeWinnerOverlay() {
+  document.getElementById('winner-overlay').style.display = 'none';
+}
+
+function doPrizeDraw() {
+  const prizeId = document.getElementById('prize-select').value;
+  if (!prizeId) { showToast('Select a prize first!'); return; }
+
   const stats = getBdmStats();
   let pool = [];
   ALL_PEOPLE.forEach(b => {
+    // Skip people who already won 2 non-day-off prizes
+    if (getWinCount(b) >= 2) return;
     for (let i = 0; i < stats[b].total; i++) pool.push(b);
   });
-  if (pool.length === 0) { showToast('No tickets in the barrel yet!'); return; }
 
-  const resultEl = document.getElementById('draw-result');
-  const nameEl = document.getElementById('winner-name');
-  resultEl.classList.remove('show');
+  if (pool.length === 0) { showToast('No eligible tickets in the barrel!'); return; }
 
-  let count = 0;
-  const interval = setInterval(() => {
-    nameEl.textContent = ALL_PEOPLE[Math.floor(Math.random() * ALL_PEOPLE.length)];
-    resultEl.classList.add('show');
-    count++;
-    if (count >= 20) {
-      clearInterval(interval);
-      const winner = pool[Math.floor(Math.random() * pool.length)];
-      nameEl.textContent = winner;
-      nameEl.style.animation = 'none';
-      setTimeout(() => nameEl.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)', 10);
-      launchConfetti();
+  const prize = PRIZES.find(p => p.id === prizeId);
+  const overlay = document.getElementById('draw-countdown-overlay');
+  const countdownNum = document.getElementById('draw-countdown-number');
+  const countdownPrize = document.getElementById('draw-countdown-prize');
+
+  // Show countdown
+  overlay.style.display = 'flex';
+  countdownPrize.textContent = `Drawing for: ${prize.emoji} ${prize.name}`;
+
+  let count = 3;
+  countdownNum.textContent = count;
+  countdownNum.style.animation = 'none';
+  setTimeout(() => countdownNum.style.animation = 'popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)', 10);
+
+  const countdownInterval = setInterval(() => {
+    count--;
+    if (count > 0) {
+      countdownNum.textContent = count;
+      countdownNum.style.animation = 'none';
+      setTimeout(() => countdownNum.style.animation = 'popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)', 10);
+    } else {
+      clearInterval(countdownInterval);
+      overlay.style.display = 'none';
+
+      // Drum roll — cycle names
+      const winnerOverlay = document.getElementById('winner-overlay');
+      const winnerName = document.getElementById('winner-overlay-name');
+      const winnerPrize = document.getElementById('winner-overlay-prize');
+      const winnerEmoji = document.getElementById('winner-overlay-emoji');
+
+      winnerOverlay.style.display = 'flex';
+      winnerPrize.textContent = '';
+      winnerEmoji.textContent = '';
+
+      let rollCount = 0;
+      const eligible = [...new Set(pool)];
+      const rollInterval = setInterval(() => {
+        winnerName.textContent = eligible[Math.floor(Math.random() * eligible.length)];
+        winnerName.style.animation = 'none';
+        rollCount++;
+        if (rollCount >= 25) {
+          clearInterval(rollInterval);
+          // Pick the real winner
+          const winner = pool[Math.floor(Math.random() * pool.length)];
+          winnerName.textContent = winner;
+          winnerName.style.animation = 'popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)';
+          winnerPrize.textContent = `wins ${prize.name}!`;
+          winnerEmoji.textContent = prize.emoji;
+
+          // Record it
+          prizeWinners.push({ prizeId: prize.id, winner, timestamp: new Date().toISOString() });
+          savePrizeWinners();
+          renderPrizeGrid();
+          renderDraw();
+          launchConfetti();
+          setTimeout(launchConfetti, 800);
+          setTimeout(launchConfetti, 1600);
+        }
+      }, 70);
     }
-  }, 80);
+  }, 1000);
 }
+
+// Legacy alias
+function doDraw() { doPrizeDraw(); }
 
 // ---- STATE REFRESH ----
 async function refreshState() {
@@ -1496,6 +1666,7 @@ async function refreshState() {
     renderLeaderboard();
     renderChallenges();
     renderDraw();
+    renderPrizeGrid();
   } catch (e) {
     console.error('Failed to fetch state', e);
   }
